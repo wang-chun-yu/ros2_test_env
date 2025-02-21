@@ -4,9 +4,16 @@
 docker build --network host -f base.dockerfile . -t ros_humble:latest
 - add user
 docker build --network host -f create_user.dockerfile . -t ros_humble:chunyu
+
+# build navigation2
+```
+export ROS_DISTRO=humble
+git clone https://github.com/ros-navigation/navigation2.git --branch main
+docker build --tag navigation2:$ROS_DISTRO   --build-arg FROM_IMAGE=ros:$ROS_DISTRO   --build-arg OVERLAY_MIXINS="release ccache lld"   --cache-from ghcr.io/ros-navigation/navigation2:main   ./navigation2 --network host --no-cache 
+```
 # pull repositories
 ```
-git@github.com:ros-navigation/navigation2.git
+git clone git@github.com:ros-navigation/navigation2.git
 git checkout humble
 ```
 # install depends
@@ -42,3 +49,7 @@ sudo apt-get install libompl-dev
     sudo systemctl daemon-reload
     sudo systemctl restart docker
     ```
+
+
+
+rosdep update
