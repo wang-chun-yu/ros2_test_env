@@ -5,18 +5,29 @@ docker build --network host -f base.dockerfile . -t ros_humble:latest
 - add user
 docker build --network host -f create_user.dockerfile . -t ros_humble:chunyu
 
-# build navigation2
+# ~~build navigation2~~
 ```
 export ROS_DISTRO=humble
 git clone https://github.com/ros-navigation/navigation2.git --branch main
 docker build --tag navigation2:$ROS_DISTRO   --build-arg FROM_IMAGE=ros:$ROS_DISTRO   --build-arg OVERLAY_MIXINS="release ccache lld"   --cache-from ghcr.io/ros-navigation/navigation2:main   ./navigation2 --network host --no-cache 
 ```
-# pull repositories
-```
-git clone git@github.com:ros-navigation/navigation2.git
+# download navigation2 src
+git clone https://github.com/ros-navigation/navigation2.git --branch humble
 git checkout humble
-```
-# install depends
+# add navigation dependences
+sudo apt update
+sudo apt install python3-rosdep
+sudo rosdep init
+rosdep update
+rosdep install --from-paths src --ignore-src -r -y
+
+# run
+
+export TURTLEBOT3_MODEL=waffle
+export GAZEBO_MODEL_PATH=/home/chunyu/work/src/turtlebot3_simulations/turtlebot3_gazebo/models
+ros2 launch nav2_bringup tb3_simulation_launch.py headless:=False
+
+
 ```
 sudo apt update
 #sudo apt install ros-humble-geographic-msgs
@@ -53,3 +64,11 @@ sudo apt-get install libompl-dev
 
 
 rosdep update
+
+
+# reference documentation
+- nav2
+nav2 Document ：https://docs.nav2.org/getting_started/index.html
+- turtlebot3
+https://github.com/ROBOTIS-GIT/turtlebot3/tree/humble
+https://github.com/ROBOTIS-GIT/turtlebot3_simulations

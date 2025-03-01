@@ -30,6 +30,8 @@ RUN apt-get update && apt-get install -y \
 # RUN pip3 install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
 # RUN pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple numpy pandas
 
+RUN echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+
 # 启动时进入 bash
 CMD ["/bin/bash"]
 
