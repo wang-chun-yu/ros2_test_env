@@ -8,21 +8,34 @@ docker build --network host -f create_user.dockerfile . -t ros_humble:chunyu
 # ~~build navigation2~~
 ```
 export ROS_DISTRO=humble
+cd ~/work/ros2_test_env/src
 git clone https://github.com/ros-navigation/navigation2.git --branch main
 docker build --tag navigation2:$ROS_DISTRO   --build-arg FROM_IMAGE=ros:$ROS_DISTRO   --build-arg OVERLAY_MIXINS="release ccache lld"   --cache-from ghcr.io/ros-navigation/navigation2:main   ./navigation2 --network host --no-cache 
 ```
-# download navigation2 src
+# download navigation2 && turtlebot3 src
 git clone https://github.com/ros-navigation/navigation2.git --branch humble
-git checkout humble
-# add navigation dependences
+git clone git@github.com:ROBOTIS-GIT/turtlebot3_simulations.git --branch humble
+# create docker container
+./docker/scripts/normal_env_run.sh
+# into docker container
+./docker/scripts/normal_env_into.sh
+# add navigation2 dependences
 sudo apt update
 sudo apt install python3-rosdep
 sudo rosdep init
 rosdep update
+cd ~/work
 rosdep install --from-paths src --ignore-src -r -y
+# source env
+echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
+source ~/.bashrc
+# build navigation2
+colcon build
+# source nav2 
+echo 'source ~/work/install/setup.bash' >> ~/.bashrc
+source ~/.bashrc
 
 # run
-
 export TURTLEBOT3_MODEL=waffle
 export GAZEBO_MODEL_PATH=/home/chunyu/work/src/turtlebot3_simulations/turtlebot3_gazebo/models
 ros2 launch nav2_bringup tb3_simulation_launch.py headless:=False
