@@ -40,21 +40,6 @@ export TURTLEBOT3_MODEL=waffle
 export GAZEBO_MODEL_PATH=/home/chunyu/work/src/turtlebot3_simulations/turtlebot3_gazebo/models
 ros2 launch nav2_bringup tb3_simulation_launch.py headless:=False
 
-
-```
-sudo apt update
-#sudo apt install ros-humble-geographic-msgs
-#sudo apt install ros-humble-bond-core
-sudo apt install ros-humble-bondcpp
-sudo apt install ros-humble-test-msgs
-sudo apt-get install ros-humble-behaviortree-cpp-v3
-sudo apt-get install libgraphicsmagick1-dev libgraphicsmagick++1-dev
-sudo apt-get install ros-humble-diagnostic-updater
-sudo apt-get install libceres-dev
-sudo apt-get install libxtensor-dev
-sudo apt-get install libompl-dev
-```
-
 # note
 - ERROR: failed to solve: osrf/ros:humble-desktop: failed to do request: Head "https://registry-1.docker.io/v2/osrf/ros/manifests/humble-desktop": dial tcp [2a03:2880:f134:83:face:b00c:0:25de]:443: i/o timeout
     - 如果你所在的网络受限，可能需要配置 Docker 通过代理访问 Docker Hub。编辑 Docker 配置文件：
