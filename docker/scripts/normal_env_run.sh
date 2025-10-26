@@ -39,5 +39,6 @@ docker run -it -d \
 -e XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR \
 -v ${MONITOR_HOME_DIR}:/home/${user_name}/work \
 -v ${XDG_RUNTIME_DIR}:${XDG_RUNTIME_DIR} \
+-v /dev:/dev \
 --net host \
 ${images_name} \

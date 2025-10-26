@@ -1,9 +1,12 @@
 [TOC]
 # build docker images
 - create ros images
+cd {your_workspace}/ros2_test_env/docker/
 docker build --network host -f base.dockerfile . -t ros_humble:latest
 - add user
-docker build --network host -f create_user.dockerfile . -t ros_humble:chunyu
+
+# run docker container
+./docker/scripts/normal_env_run.sh
 
 # ~~build navigation2~~
 ```
@@ -22,10 +25,10 @@ git clone git@github.com:ROBOTIS-GIT/turtlebot3_simulations.git --branch humble
 # add navigation2 dependences
 sudo apt update
 sudo apt install python3-rosdep
-sudo rosdep init
+rosdep init
 rosdep update
 cd ~/work
-rosdep install --from-paths src --ignore-src -r -y
+rosdep install --from-paths src/navigation2 --ignore-src -r -y
 # source env
 echo 'source /opt/ros/humble/setup.bash' >> ~/.bashrc
 source ~/.bashrc
