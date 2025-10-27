@@ -100,6 +100,7 @@ function disconnect() {
  */
 function createPeerConnection() {
     pc = new RTCPeerConnection(iceServers);
+    window.pc = pc;  // 暴露到全局作用域以便调试
     
     // 处理 ICE 候选
     pc.onicecandidate = (event) => {
@@ -120,11 +121,43 @@ function createPeerConnection() {
     
     // 处理接收到的媒体流
     pc.ontrack = (event) => {
-        console.log('接收到媒体流');
+        console.log('接收到媒体流, 轨道数:', event.streams[0].getTracks().length);
+        
+        // 设置视频源
         videoElement.srcObject = event.streams[0];
         
-        // 开始统计
-        startStats();
+        // 等待视频元数据加载完成后再播放
+        videoElement.onloadedmetadata = async () => {
+            console.log('视频元数据已加载');
+            
+            try {
+                // 明确调用 play()
+                await videoElement.play();
+                console.log('✅ 视频开始播放');
+                updateStatus('connected', '✅ 视频正在播放');
+                // 隐藏播放按钮
+                document.getElementById('playBtn').style.display = 'none';
+            } catch (error) {
+                console.error('❌ 视频播放失败:', error);
+                updateStatus('connected', '⚠️ 视频播放失败（点击播放按钮）');
+                // 显示播放按钮
+                document.getElementById('playBtn').style.display = 'block';
+            }
+        };
+        
+        // 添加更多事件监听以便调试
+        videoElement.onplay = () => {
+            console.log('视频 play 事件触发');
+            startStats();
+        };
+        
+        videoElement.onplaying = () => {
+            console.log('视频 playing 事件触发（真正开始播放）');
+        };
+        
+        videoElement.onerror = (e) => {
+            console.error('视频错误:', e);
+        };
     };
     
     console.log('PeerConnection 已创建');
@@ -158,10 +191,22 @@ async function handleSignalingMessage(message) {
             
         } else if (message.type === 'candidate') {
             // 添加 ICE 候选
-            await pc.addIceCandidate(new RTCIceCandidate({
-                candidate: message.candidate
-            }));
-            console.log('已添加 ICE 候选');
+            // 注意：libdatachannel 发送的 candidate 可能缺少 sdpMid/sdpMLineIndex
+            // 如果缺少这些字段，我们可以尝试使用默认值或跳过
+            if (message.candidate) {
+                try {
+                    const candidateInit = {
+                        candidate: message.candidate,
+                        sdpMid: message.sdpMid || '0',  // 默认使用第一个媒体流
+                        sdpMLineIndex: message.sdpMLineIndex !== undefined ? message.sdpMLineIndex : 0
+                    };
+                    await pc.addIceCandidate(new RTCIceCandidate(candidateInit));
+                    console.log('已添加 ICE 候选');
+                } catch (error) {
+                    // ICE candidate 错误不是致命的，可以继续
+                    console.warn('添加 ICE 候选失败（非致命）:', error);
+                }
+            }
         }
     } catch (error) {
         console.error('处理信令消息失败:', error);
@@ -227,6 +272,24 @@ function startStats() {
             console.error('获取统计信息失败:', error);
         }
     }, 1000);
+}
+
+/**
+ * 手动播放视频（当自动播放失败时）
+ */
+async function manualPlay() {
+    const videoElement = document.getElementById('videoElement');
+    const playBtn = document.getElementById('playBtn');
+    
+    try {
+        await videoElement.play();
+        console.log('✅ 手动播放成功');
+        playBtn.style.display = 'none';
+        updateStatus('connected', '✅ 视频正在播放');
+    } catch (error) {
+        console.error('❌ 手动播放失败:', error);
+        alert('播放失败: ' + error.message);
+    }
 }
 
 /**

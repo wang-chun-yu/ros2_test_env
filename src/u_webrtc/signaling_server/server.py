@@ -9,7 +9,7 @@ import json
 import logging
 from typing import Set
 import websockets
-from websockets.server import WebSocketServerProtocol
+from websockets.asyncio.server import ServerConnection
 
 # 配置日志
 logging.basicConfig(
@@ -19,10 +19,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # 存储所有连接的客户端
-clients: Set[WebSocketServerProtocol] = set()
+clients: Set[ServerConnection] = set()
 
 
-async def handle_client(websocket: WebSocketServerProtocol, path: str):
+async def handle_client(websocket: ServerConnection):
     """处理客户端连接"""
     # 添加客户端到集合
     clients.add(websocket)

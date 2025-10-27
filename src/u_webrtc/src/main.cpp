@@ -136,6 +136,14 @@ private:
     
     int64_t _frameCount{0};
     int64_t _successCount{0};
+
+public:
+    /**
+     * @brief 获取图像订阅器节点（用于添加到 executor）
+     */
+    std::shared_ptr<u_webrtc::ImageSubscriber> getImageSubscriber() {
+        return _imageSubscriber;
+    }
 };
 
 int main(int argc, char** argv) {
@@ -147,6 +155,16 @@ int main(int argc, char** argv) {
         // 使用 MultiThreadedExecutor 提高性能
         rclcpp::executors::MultiThreadedExecutor executor;
         executor.add_node(node);
+        
+        // 关键：必须将 ImageSubscriber 节点也添加到 executor 中
+        // 否则它的回调函数永远不会被触发！
+        auto imageSubscriber = node->getImageSubscriber();
+        if (imageSubscriber) {
+            executor.add_node(imageSubscriber);
+            RCLCPP_INFO(rclcpp::get_logger("main"), 
+                       "已将 ImageSubscriber 节点添加到 executor");
+        }
+        
         executor.spin();
         
     } catch (const std::exception& e) {

@@ -27,7 +27,7 @@ def generate_launch_description():
     
     declare_image_topic = DeclareLaunchArgument(
         'image_topic',
-        default_value='/camera/image_raw',
+        default_value='/camera/color/image_raw',
         description='要订阅的图像话题名称'
     )
     

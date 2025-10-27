@@ -1,7 +1,7 @@
 webrtc_streamer:
   ros__parameters:
     # ROS2 配置
-    image_topic: "/camera/image_raw"
+    image_topic: "/camera/color/image_raw"
     qos_depth: 10
     
     # WebRTC 配置
@@ -15,8 +15,8 @@ webrtc_streamer:
     codec: "VP8"  # VP8, VP9, H264
     target_bitrate: 2000000  # 2 Mbps
     max_framerate: 30
-    width: 1280
-    height: 720
+    width: 640
+    height: 480
     
     # 性能配置
     encoding_threads: 4
