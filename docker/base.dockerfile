@@ -10,10 +10,12 @@ ENV ROS_PYTHON_VERSION 3
 RUN apt-get clean && \
     apt-get autoclean
 
-# COPY ../apt/sources.list /etc/apt/
+# 使用阿里云镜像源加速下载
+COPY apt/sources.list /etc/apt/sources.list
 
-# 添加缺失的 GPG 公钥 (可能需要)
-# RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
+# 导入 ROS 2 官方软件源的 GPG 密钥并配置仓库（避免 apt-key 过期问题）
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu jammy main" > /etc/apt/sources.list.d/ros2-latest.list
 
 # 更新包管理器并安装必要的开发工具和依赖
 RUN apt-get update && apt-get install -y \
