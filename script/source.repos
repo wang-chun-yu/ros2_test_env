@@ -1,0 +1,10 @@
+repositories:
+  BehaviorTree.CPP:
+    type: git
+    url: git@github.com:wang-chun-yu/BehaviorTree.CPP.git
+    version: master
+  ProgramSummary:
+    type: git
+    url: git@github.com:wang-chun-yu/ProgramSummary.git
+    version: master
+  # 跳过仓库(未配置上游分支): slametc

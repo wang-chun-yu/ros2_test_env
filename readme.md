@@ -56,14 +56,14 @@ ros2 launch nav2_bringup tb3_simulation_launch.py headless:=False
 
 
 
-
-
-
-
-
-
-
-
+# 使用现有编程规则
+- 如果希望使用现有的编程规则，可以克隆以下代码仓库
+```
+git clone git@github.com:wang-chun-yu/cursor-rules.git
+ln -s git@github.com:wang-chun-yu/cursor-rules.git
+// 可能需要重启cursor加载规则
+// 新增chat窗口，询问“”你是谁，你有什么作用"检查规则是否加载
+```
 
 
 # note
